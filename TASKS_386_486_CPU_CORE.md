@@ -42,14 +42,11 @@ Maintained alongside `docs/386_486_cpu_core_spec.md` (architectural spec),
 - Decisions captured above. No code changes required for this task — the
   deliverable is this plan file plus the inventory above.
 
-### Task 1 — CPU core specification document [ ]
+### Task 1 — CPU core specification document [x]
 
-- Add `docs/386_486_cpu_core_spec.md`.
-- Personalities: 386DX-25, 386DX-40, 486SX-25, 486SX-33, 486DX-33, 486DX2-66,
-  486DX4-100.
-- Milestones: 386 real-mode integer → protected mode → paging → 486
-  instructions → cache-control → optional x87/FPU.
-- FPU treated as an optional build/synthesis feature from day one.
+- `docs/386_486_cpu_core_spec.md` landed.
+- Personalities, milestones, FPU build matrix, module decomposition, bus
+  interface sketch, coding rules, and legal/sourcing posture all captured.
 
 ### Task 2 — Skeleton RTL [ ]
 
