@@ -40,7 +40,13 @@ module cpu386486_top
 
     // Debug / observability.
     output logic [31:0] dbg_eip,
-    output logic [31:0] dbg_eflags
+    output logic [31:0] dbg_eflags,
+    output logic [31:0] dbg_gpr   [8],
+    output seg_reg_t    dbg_seg   [cpu386486_pkg::NUM_SEGS],
+    output logic [31:0] dbg_cr0,
+    output logic [31:0] dbg_cr2,
+    output logic [31:0] dbg_cr3,
+    output logic [31:0] dbg_cr4
 );
 
   // ----------------------------------------------------------------------
@@ -50,25 +56,74 @@ module cpu386486_top
   cpu386486_config #(.PERSONALITY(PERSONALITY)) u_cfg (.features(features));
 
   // ----------------------------------------------------------------------
-  // Register file.
+  // Register file. Write enables are held low at the top level until
+  // Task 5+ wire up real execution; debug ports give the testbench full
+  // observability.
   // ----------------------------------------------------------------------
-  logic [15:0] cs_selector;
-  logic [31:0] cs_base;
-  logic [31:0] cs_limit;
+  logic [31:0] gpr_rd1_data;
+  logic [31:0] gpr_rd2_data;
+  seg_reg_t    seg_rd_data;
   logic [31:0] eip;
   logic [31:0] eflags;
-  logic [31:0] cr0;
+  logic [31:0] cr_rd_data;
+
+  op_size_e c_sz32;
+  logic [2:0] c_seg_cs;
+  seg_reg_t   c_seg_zero;
+  assign c_sz32     = SZ_32;
+  assign c_seg_cs   = 3'(SEG_CS);
+  assign c_seg_zero = '0;
 
   cpu386486_regs #(.PERSONALITY(PERSONALITY)) u_regs (
-      .clk        (clk),
-      .reset      (reset),
-      .cs_selector(cs_selector),
-      .cs_base    (cs_base),
-      .cs_limit   (cs_limit),
-      .eip        (eip),
-      .eflags     (eflags),
-      .cr0        (cr0)
+      .clk           (clk),
+      .reset         (reset),
+      .gpr_rd1_sel   (3'd0),
+      .gpr_rd1_size  (c_sz32),
+      .gpr_rd1_data  (gpr_rd1_data),
+      .gpr_rd2_sel   (3'd0),
+      .gpr_rd2_size  (c_sz32),
+      .gpr_rd2_data  (gpr_rd2_data),
+      .gpr_wr_en     (1'b0),
+      .gpr_wr_sel    (3'd0),
+      .gpr_wr_size   (c_sz32),
+      .gpr_wr_data   (32'h0),
+      .seg_rd_sel    (c_seg_cs),
+      .seg_rd_data   (seg_rd_data),
+      .seg_wr_en     (1'b0),
+      .seg_wr_sel    (c_seg_cs),
+      .seg_wr_data   (c_seg_zero),
+      .eip_set_en    (1'b0),
+      .eip_set_val   (32'h0),
+      .eip_inc_en    (1'b0),
+      .eip_inc_val   (32'h0),
+      .eip_q         (eip),
+      .eflags_wr_en  (1'b0),
+      .eflags_wr_val (32'h0),
+      .eflags_wr_mask(32'h0),
+      .eflags_q      (eflags),
+      .cr_wr_en      (1'b0),
+      .cr_wr_sel     (3'd0),
+      .cr_wr_val     (32'h0),
+      .cr_rd_sel     (3'd0),
+      .cr_rd_data    (cr_rd_data),
+      .dbg_gpr       (dbg_gpr),
+      .dbg_seg       (dbg_seg),
+      .dbg_cr0       (dbg_cr0),
+      .dbg_cr2       (dbg_cr2),
+      .dbg_cr3       (dbg_cr3),
+      .dbg_cr4       (dbg_cr4)
   );
+
+  // Convenience views still used by the rest of the skeleton.
+  // iverilog 12 has trouble with struct-field access via unpacked-array
+  // index in continuous assigns, so we route CS through an explicit seg
+  // read port and unpack into scalar wires.
+  seg_reg_t cs_desc;
+  assign cs_desc = seg_rd_data;  // tied to seg_rd_sel = SEG_CS above
+  wire [31:0] cs_base  = cs_desc.base;
+  wire [31:0] cs_limit = cs_desc.limit;
+  wire [15:0] cs_sel   = cs_desc.selector;
+  wire [31:0] cr0      = dbg_cr0;
 
   // ----------------------------------------------------------------------
   // Control / sequencer / microcode (all stubs).
@@ -222,7 +277,7 @@ module cpu386486_top
   logic _unused_top;
   assign _unused_top = &{1'b0,
                          features,        // TODO Task 5: use clock_mult
-                         cs_selector,     // TODO Task 5: drive far-jump path
+                         cs_sel,          // TODO Task 5: drive far-jump path
                          cs_limit,        // TODO Task 12: protection
                          running,         // TODO Task 5: gate fetch
                          seq_idle,        // TODO Task 6
@@ -236,6 +291,10 @@ module cpu386486_top
                          nmi_req,         // TODO Task 10
                          bus_req_ready,   // TODO Task 5
                          bus_req_rdata,   // TODO Task 5
-                         bus_req_fault};  // TODO Task 5
+                         bus_req_fault,   // TODO Task 5
+                         gpr_rd1_data,    // TODO Task 7
+                         gpr_rd2_data,    // TODO Task 7
+                         seg_rd_data,     // TODO Task 9
+                         cr_rd_data};     // TODO Task 12
 
 endmodule : cpu386486_top

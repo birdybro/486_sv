@@ -76,13 +76,21 @@ Maintained alongside `docs/386_486_cpu_core_spec.md` (architectural spec),
   CI will execute the reset testbench. Reset test is also a Task 5
   acceptance gate.
 
-### Task 4 — Architectural register file [ ]
+### Task 4 — Architectural register file [x]
 
-- GPRs EAX..EDI with 8/16/32-bit views (AL/AH/AX/EAX...).
-- Segment registers CS, DS, ES, SS, FS, GS plus hidden descriptor cache.
-- EIP, EFLAGS.
-- CR0/CR2/CR3/CR4 placeholders.
-- Directed tests for each access path.
+- Real `cpu386486_regs` implementation: two GPR read ports + one write
+  port with 8/16/32-bit sizing, AH/BH/CH/DH high-byte addressing; segment
+  file (selector + base + limit + access bits); EIP with arbitrary-set
+  and increment; EFLAGS with caller mask + personality mask (AC dropped on
+  386) + reserved-1; CR0/CR2/CR3/CR4 with CR4 gated on 486 personalities.
+- Package extended with `op_size_e`, `gpr_e`, `seg_e`, `seg_reg_t`, and
+  EFLAGS supported-mask localparam.
+- `tb_cpu386486_regs.sv` exercises all access paths (20 assertions).
+  Reset test extended (10 assertions). Both pass under Icarus Verilog 12.
+- Iverilog 12 compatibility issues encountered and worked around:
+  no `automatic` lifetime overrides, no unpacked-array function args,
+  no struct-field access via unpacked-array index in continuous assigns.
+  These are sim-tool nuisances; the RTL stays synthesizable.
 
 ### Task 5 — Reset and real-mode fetch [ ]
 
