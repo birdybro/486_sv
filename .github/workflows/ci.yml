@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  sim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Icarus Verilog and Verilator
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog verilator
+
+      - name: Lint (no FPU)
+        run: python3 scripts/run_tests.py --lint
+
+      - name: Lint (FPU compiled)
+        run: python3 scripts/run_tests.py --lint --fpu
+
+      - name: Run tests (no FPU)
+        run: python3 scripts/run_tests.py
+
+      - name: Run tests (FPU compiled)
+        run: python3 scripts/run_tests.py --fpu

@@ -61,12 +61,20 @@ Maintained alongside `docs/386_486_cpu_core_spec.md` (architectural spec),
 - Lint not yet run on the dev host (no `verilator`/`iverilog` on PATH; the
   test runner in Task 3 will execute lint when those tools are present).
 
-### Task 3 — Simulation harness [ ]
+### Task 3 — Simulation harness [x]
 
-- `tb/tb_cpu386486_reset.sv` resets the CPU and checks reset state.
-- `tb/mem_model.sv` simple byte-addressable async memory.
-- `scripts/run_tests.py` discovers tests under `test/` and runs Icarus Verilog.
-- README/spec section documenting how to run tests.
+- `tb/mem_model.sv` byte-addressable sim memory with configurable latency.
+- `tb/tb_cpu386486_reset.sv` testbench verifying reset state.
+- `test/tests.json` test catalog (extensible).
+- `scripts/run_tests.py` discovers tests, runs Icarus Verilog, exits with
+  code 2 when no simulator is found (so CI distinguishes "no tooling"
+  from "broken").
+- `.github/workflows/ci.yml` installs iverilog+verilator on Ubuntu and runs
+  lint and tests in both FPU-out and FPU-compiled configurations.
+- README rewritten with personality table and run instructions.
+- **Local run:** runner exits 2 (no-sim) on the dev host as expected;
+  CI will execute the reset testbench. Reset test is also a Task 5
+  acceptance gate.
 
 ### Task 4 — Architectural register file [ ]
 

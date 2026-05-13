@@ -1,0 +1,9 @@
+[
+  {
+    "name": "reset",
+    "tb_top": "tb_cpu386486_reset",
+    "tb_files": ["tb/mem_model.sv", "tb/tb_cpu386486_reset.sv"],
+    "tasks": ["Task 3", "Task 5"],
+    "description": "Verifies post-reset EIP/EFLAGS state and absence of spurious bus traffic."
+  }
+]
