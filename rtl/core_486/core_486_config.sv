@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-// cpu386486_config : maps a personality enum to a cpu_features_t record.
+// core_486_config : maps a personality enum to a cpu_features_t record.
 //
 // Pure combinational helper. Synthesizable. Avoid placing any state here.
 
-module cpu386486_config
-  import cpu386486_pkg::*;
+module core_486_config
+  import core_486_pkg::*;
 #(
     parameter cpu_personality_e PERSONALITY = P_386DX_25
 ) (
@@ -85,4 +85,4 @@ module cpu386486_config
 
   assign features = personality_features(PERSONALITY);
 
-endmodule : cpu386486_config
+endmodule : core_486_config

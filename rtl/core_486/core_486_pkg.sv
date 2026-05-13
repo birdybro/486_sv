@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
-// cpu386486_pkg : shared types, enums, and parameter helpers for the 386/486 core.
+// core_486_pkg : shared types, enums, and parameter helpers for the 386/486 core.
 //
 // Reference: Intel 80386 Programmer's Reference Manual (1986) §2, and Intel
 // i486 Programmer's Reference Manual (1990) §2 for programming model and
 // register layouts.
 
-`ifndef CPU386486_PKG_SV
-`define CPU386486_PKG_SV
+`ifndef core_486_pkg_SV
+`define core_486_pkg_SV
 
-package cpu386486_pkg;
+package core_486_pkg;
 
   // -----------------------------------------------------------------------
   // Personality identification.
   //
   // The enum values are kept stable across revisions; new personalities are
   // appended. Each personality resolves to a cpu_features_t record via
-  // cpu386486_config::personality_features().
+  // core_486_config::personality_features().
   // -----------------------------------------------------------------------
 
   typedef enum logic [3:0] {
@@ -36,7 +36,7 @@ package cpu386486_pkg;
   // -----------------------------------------------------------------------
   // Feature record produced by the configuration helper. RTL queries this
   // record rather than introspecting the personality enum directly, so that
-  // adding a new personality only touches cpu386486_config.sv.
+  // adding a new personality only touches core_486_config.sv.
   // -----------------------------------------------------------------------
 
   typedef struct packed {
@@ -178,6 +178,6 @@ package cpu386486_pkg;
   localparam logic [7:0] VEC_MF  = 8'd16;  // x87 floating-point error
   localparam logic [7:0] VEC_AC  = 8'd17;  // 486+: alignment check
 
-endpackage : cpu386486_pkg
+endpackage : core_486_pkg
 
-`endif // CPU386486_PKG_SV
+`endif // core_486_pkg_SV

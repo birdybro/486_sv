@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test runner for the cpu386486 core.
+"""Test runner for the core_486 core.
 
 Discovers tests from test/tests.json, compiles them with Icarus Verilog,
 and reports pass/fail. Exits 0 only when every selected test passes; exits
@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-FILELIST = REPO_ROOT / "rtl" / "cpu386486" / "filelist.f"
+FILELIST = REPO_ROOT / "rtl" / "core_486" / "filelist.f"
 BUILD_DIR = REPO_ROOT / "build"
 TESTS_JSON = REPO_ROOT / "test" / "tests.json"
 
@@ -60,10 +60,10 @@ def run_lint(define_fpu: bool) -> int:
         return EXIT_NO_SIM
     cmd = [
         "verilator", "--lint-only", "-Wall", "-Wno-fatal",
-        "--top-module", "cpu386486_top",
+        "--top-module", "core_486_top",
     ]
     if define_fpu:
-        cmd.append("-DCPU386486_ENABLE_FPU")
+        cmd.append("-DCORE_486_ENABLE_FPU")
     cmd.extend(str(p) for p in read_filelist())
     print("$", " ".join(cmd))
     return subprocess.run(cmd, cwd=REPO_ROOT).returncode
@@ -82,7 +82,7 @@ def run_test(test: dict, define_fpu: bool) -> int:
         "-o", str(vvp_path),
     ]
     if define_fpu:
-        compile_cmd.extend(["-D", "CPU386486_ENABLE_FPU"])
+        compile_cmd.extend(["-D", "CORE_486_ENABLE_FPU"])
     compile_cmd.extend(str(p) for p in sources)
     print("$", " ".join(compile_cmd))
     rc = subprocess.run(compile_cmd, cwd=REPO_ROOT).returncode
@@ -111,7 +111,7 @@ def main() -> int:
     ap.add_argument("--list", action="store_true",
                     help="list known tests and exit")
     ap.add_argument("--fpu", action="store_true",
-                    help="define CPU386486_ENABLE_FPU for this build")
+                    help="define CORE_486_ENABLE_FPU for this build")
     args = ap.parse_args()
 
     if args.list:

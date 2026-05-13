@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// cpu386486_regs : architectural register file.
+// core_486_regs : architectural register file.
 //
 // Holds:
 //   * Eight 32-bit GPRs (EAX..EDI) with 8/16/32-bit access windows.
@@ -16,8 +16,8 @@
 // References: Intel 80386 PRM §2 (registers, flags), Intel i486 PRM §2,
 // and §10 for reset semantics.
 
-module cpu386486_regs
-  import cpu386486_pkg::*;
+module core_486_regs
+  import core_486_pkg::*;
 #(
     parameter cpu_personality_e PERSONALITY = P_386DX_25
 ) (
@@ -93,7 +93,7 @@ module cpu386486_regs
   // Configuration lookup (drives CR0 reset value and CR4 visibility).
   // ----------------------------------------------------------------------
   cpu_features_t features;
-  cpu386486_config #(.PERSONALITY(PERSONALITY)) u_cfg (.features(features));
+  core_486_config #(.PERSONALITY(PERSONALITY)) u_cfg (.features(features));
 
   wire [31:0] cr0_reset_val =
       (features.family == FAM_486) ? RESET_CR0_486 : RESET_CR0_386;
@@ -288,4 +288,4 @@ module cpu386486_regs
   assign dbg_cr3 = cr3_r;
   assign dbg_cr4 = cr4_r;
 
-endmodule : cpu386486_regs
+endmodule : core_486_regs

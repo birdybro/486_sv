@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-// cpu386486_exceptions : exception-vector arbitration (stub). Task 10 wires
+// core_486_exceptions : exception-vector arbitration (stub). Task 10 wires
 // real fault/trap sources in.
 
-module cpu386486_exceptions (
+module core_486_exceptions (
     input  logic       reset,
     input  logic       raise_ud,
     input  logic       raise_nm,
@@ -25,4 +25,4 @@ module cpu386486_exceptions (
     else               exc_vector = 8'd0;
   end
 
-endmodule : cpu386486_exceptions
+endmodule : core_486_exceptions

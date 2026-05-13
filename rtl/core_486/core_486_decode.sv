@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-// cpu386486_decode : instruction decoder (stub). Real implementation arrives
+// core_486_decode : instruction decoder (stub). Real implementation arrives
 // in Task 6 — prefix handling, ModRM/SIB, opcode → microcode entry.
 
-module cpu386486_decode (
+module core_486_decode (
     input  logic        clk,
     input  logic        reset,
     input  logic        byte_valid,
@@ -19,4 +19,4 @@ module cpu386486_decode (
   assign decode_busy = 1'b0;
   assign fpu_op_seen = 1'b0;
 
-endmodule : cpu386486_decode
+endmodule : core_486_decode

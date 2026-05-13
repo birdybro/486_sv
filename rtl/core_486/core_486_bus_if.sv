@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-// cpu386486_bus_if : external bus master interface. Skeleton — provides the
+// core_486_bus_if : external bus master interface. Skeleton — provides the
 // pin set the top module exposes and a no-op behavior until Task 5 wires
 // real fetch through it.
 
-module cpu386486_bus_if (
+module core_486_bus_if (
     input  logic        clk,
     input  logic        reset,
 
@@ -41,4 +41,4 @@ module cpu386486_bus_if (
   assign req_rdata = bus_rdata;
   assign req_fault = bus_fault;
 
-endmodule : cpu386486_bus_if
+endmodule : core_486_bus_if

@@ -1,6 +1,6 @@
 # 386/486 CPU Core — Architectural Specification
 
-This document is the architectural source-of-truth for the `cpu386486` core.
+This document is the architectural source-of-truth for the `core_486` core.
 All RTL decisions defer to:
 
 1. **Intel 80386 Programmer's Reference Manual, 1986** —
@@ -35,8 +35,8 @@ projects is copied into this repository.**
 
 ## 2. Supported personalities
 
-Personalities are selected through `cpu_personality_e` in `cpu386486_pkg.sv`
-and resolve to a feature/timing record in `cpu386486_config.sv`.
+Personalities are selected through `cpu_personality_e` in `core_486_pkg.sv`
+and resolve to a feature/timing record in `core_486_config.sv`.
 
 | Personality      | Family | FPU on die | Cache         | Default mult | Notes                              |
 | ---------------- | ------ | ---------- | ------------- | ------------ | ---------------------------------- |
@@ -53,7 +53,7 @@ Notes:
 - Cache size is a personality hint surfaced via configuration. The L1 model
   itself is not implemented until cache-control work (post-Task 11).
 - "Optional" FPU means the personality *permits* an on-die FPU; whether one
-  exists depends on `ENABLE_FPU` (parameter) and `CPU386486_ENABLE_FPU`
+  exists depends on `ENABLE_FPU` (parameter) and `CORE_486_ENABLE_FPU`
   (define). See §5.
 
 ## 3. Milestones
@@ -133,15 +133,15 @@ Goal: choose between three builds without forking the codebase.
 
 | Build mode                | Parameter  | Define                       | Behavior                                                                                                  |
 | ------------------------- | ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **FPU not compiled**      | n/a        | `CPU386486_ENABLE_FPU` unset | `cpu386486_fpu_if` and any FPU datapath modules are entirely ``ifdef``-excluded. Synthesis sees no FPU.  |
-| **FPU compiled, disabled**| `ENABLE_FPU = 1'b0` | `CPU386486_ENABLE_FPU` set | Interface and stub are present; behaves as FPU-absent. Personality decides whether #NM or #UD is raised. |
-| **FPU compiled, enabled** | `ENABLE_FPU = 1'b1` | `CPU386486_ENABLE_FPU` set | Real (or stub-real) FPU is wired in. Allowed personalities: 486DX/DX2/DX4.                               |
+| **FPU not compiled**      | n/a        | `CORE_486_ENABLE_FPU` unset | `core_486_fpu_if` and any FPU datapath modules are entirely ``ifdef``-excluded. Synthesis sees no FPU.  |
+| **FPU compiled, disabled**| `ENABLE_FPU = 1'b0` | `CORE_486_ENABLE_FPU` set | Interface and stub are present; behaves as FPU-absent. Personality decides whether #NM or #UD is raised. |
+| **FPU compiled, enabled** | `ENABLE_FPU = 1'b1` | `CORE_486_ENABLE_FPU` set | Real (or stub-real) FPU is wired in. Allowed personalities: 486DX/DX2/DX4.                               |
 
 Rules:
 
 - `ENABLE_FPU = 1` while the active personality has `fpu_on_die = 0`
   (e.g., 486SX) is a configuration error caught by an `initial` assertion
-  in simulation and an `assert property` in `cpu386486_config.sv`. The
+  in simulation and an `assert property` in `core_486_config.sv`. The
   decoder still raises #NM for FPU opcodes in that case, but the build
   warns loudly.
 - The personality `P_386DX_*` always reports "no on-die FPU". A real 386
@@ -153,26 +153,26 @@ Rules:
   the BIOS handler stub.
 
 The decoder routes the F0–FF opcode prefix-D8..DF ranges through
-`cpu386486_fpu_if` regardless of build mode; the interface itself decides
+`core_486_fpu_if` regardless of build mode; the interface itself decides
 how to respond.
 
 ## 6. Module decomposition
 
 ```
-cpu386486_top
-├── cpu386486_pkg           (types, enums, parameters)
-├── cpu386486_config        (personality -> feature table)
-├── cpu386486_regs          (GPRs, segs, EIP, EFLAGS, CRn)
-├── cpu386486_prefetch      (byte queue / linear address)
-├── cpu386486_decode        (prefixes, ModRM/SIB, opcode → uop)
-├── cpu386486_microcode     (sequencer for multi-step ops)
-├── cpu386486_alu           (ALU + flag generation)
-├── cpu386486_segment       (effective-address + descriptor checks)
-├── cpu386486_paging        (CR3 + 4 KiB translation + TLB)
-├── cpu386486_exceptions    (vector arbitration, fault/trap class)
-├── cpu386486_bus_if        (external memory/IO bus master)
-├── cpu386486_fpu_if        (handshake + status), optional
-└── cpu386486_fpu_stub      (absent/#NM responder), optional
+core_486_top
+├── core_486_pkg           (types, enums, parameters)
+├── core_486_config        (personality -> feature table)
+├── core_486_regs          (GPRs, segs, EIP, EFLAGS, CRn)
+├── core_486_prefetch      (byte queue / linear address)
+├── core_486_decode        (prefixes, ModRM/SIB, opcode → uop)
+├── core_486_microcode     (sequencer for multi-step ops)
+├── core_486_alu           (ALU + flag generation)
+├── core_486_segment       (effective-address + descriptor checks)
+├── core_486_paging        (CR3 + 4 KiB translation + TLB)
+├── core_486_exceptions    (vector arbitration, fault/trap class)
+├── core_486_bus_if        (external memory/IO bus master)
+├── core_486_fpu_if        (handshake + status), optional
+└── core_486_fpu_stub      (absent/#NM responder), optional
 ```
 
 Module boundaries are stable; internal microarchitecture (single-cycle
@@ -207,7 +207,7 @@ input          nmi_req       // edge-triggered
 input          reset
 ```
 
-Internally raised exceptions are arbitrated by `cpu386486_exceptions`.
+Internally raised exceptions are arbitrated by `core_486_exceptions`.
 Vectors and class (fault/trap/abort) match Intel 386 manual §9.8.
 
 ## 9. Toolchain & how to test

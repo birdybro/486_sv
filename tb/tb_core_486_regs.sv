@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// tb_cpu386486_regs : directed tests for the architectural register file.
+// tb_core_486_regs : directed tests for the architectural register file.
 //
 // Exercises 8/16/32-bit GPR access paths (including AH/BH/CH/DH high-byte
 // addressing), segment register loads, EIP arbitrary-write and increment
@@ -8,9 +8,9 @@
 
 `timescale 1ns/1ps
 
-module tb_cpu386486_regs;
+module tb_core_486_regs;
 
-  import cpu386486_pkg::*;
+  import core_486_pkg::*;
 
   // ----------------------------------------------------------------------
   // DUT instances — one 386, one 486.
@@ -45,7 +45,7 @@ module tb_cpu386486_regs;
   seg_reg_t    a_segs[NUM_SEGS];
   logic [31:0] a_cr0, a_cr2, a_cr3, a_cr4;
 
-  cpu386486_regs #(.PERSONALITY(P_386DX_25)) dut_a (
+  core_486_regs #(.PERSONALITY(P_386DX_25)) dut_a (
       .clk(clk), .reset(reset),
       .gpr_rd1_sel(rd1_sel), .gpr_rd1_size(rd1_size), .gpr_rd1_data(a_rd1),
       .gpr_rd2_sel(rd2_sel), .gpr_rd2_size(rd2_size), .gpr_rd2_data(a_rd2),
@@ -69,7 +69,7 @@ module tb_cpu386486_regs;
   seg_reg_t    b_segs[NUM_SEGS];
   logic [31:0] b_cr0, b_cr2, b_cr3, b_cr4;
 
-  cpu386486_regs #(.PERSONALITY(P_486DX2_66)) dut_b (
+  core_486_regs #(.PERSONALITY(P_486DX2_66)) dut_b (
       .clk(clk), .reset(reset),
       .gpr_rd1_sel(rd1_sel), .gpr_rd1_size(rd1_size), .gpr_rd1_data(b_rd1),
       .gpr_rd2_sel(rd2_sel), .gpr_rd2_size(rd2_size), .gpr_rd2_data(b_rd2),
@@ -258,18 +258,18 @@ module tb_cpu386486_regs;
     check_eq32("486 reset CR0", b_cr0, 32'h0000_0010);
 
     if (fails == 0) begin
-      $display("PASS tb_cpu386486_regs");
+      $display("PASS tb_core_486_regs");
       $finish(0);
     end else begin
-      $display("FAIL tb_cpu386486_regs (%0d failures)", fails);
+      $display("FAIL tb_core_486_regs (%0d failures)", fails);
       $fatal(1);
     end
   end
 
   initial begin
     #50_000;
-    $display("FAIL tb_cpu386486_regs (timeout)");
+    $display("FAIL tb_core_486_regs (timeout)");
     $fatal(1);
   end
 
-endmodule : tb_cpu386486_regs
+endmodule : tb_core_486_regs

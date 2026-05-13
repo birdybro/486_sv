@@ -1,16 +1,23 @@
 [
   {
     "name": "reset",
-    "tb_top": "tb_cpu386486_reset",
-    "tb_files": ["tb/mem_model.sv", "tb/tb_cpu386486_reset.sv"],
+    "tb_top": "tb_core_486_reset",
+    "tb_files": ["tb/mem_model.sv", "tb/tb_core_486_reset.sv"],
     "tasks": ["Task 3", "Task 5"],
     "description": "Verifies post-reset EIP/EFLAGS state and absence of spurious bus traffic."
   },
   {
     "name": "regs",
-    "tb_top": "tb_cpu386486_regs",
-    "tb_files": ["tb/tb_cpu386486_regs.sv"],
+    "tb_top": "tb_core_486_regs",
+    "tb_files": ["tb/tb_core_486_regs.sv"],
     "tasks": ["Task 4"],
     "description": "Exercises 8/16/32-bit GPR paths, segment writes, EIP, EFLAGS mask, and CRn."
+  },
+  {
+    "name": "fetch",
+    "tb_top": "tb_core_486_fetch",
+    "tb_files": ["tb/mem_model.sv", "tb/tb_core_486_fetch.sv"],
+    "tasks": ["Task 5"],
+    "description": "Steps through a 16-byte NOP slide loaded at the wrapped reset vector."
   }
 ]

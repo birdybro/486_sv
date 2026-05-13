@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// tb_cpu386486_reset : verifies CPU reset state for each personality.
+// tb_core_486_reset : verifies CPU reset state for each personality.
 //
 // Reference: Intel 386 Manual §10.2 "Reset" and 486 Manual §10.2. After
 // reset, EIP = 0xFFF0, CS selector = 0xF000 with hidden base = 0xFFFF0000
@@ -8,9 +8,9 @@
 
 `timescale 1ns/1ps
 
-module tb_cpu386486_reset;
+module tb_core_486_reset;
 
-  import cpu386486_pkg::*;
+  import core_486_pkg::*;
 
   logic clk;
   logic reset;
@@ -33,6 +33,8 @@ module tb_cpu386486_reset;
   logic [31:0] dbg_cr2;
   logic [31:0] dbg_cr3;
   logic [31:0] dbg_cr4;
+  logic [31:0] dbg_retired_count;
+  logic        dbg_halted;
 
   // Memory model parked as a quiet responder.
   mem_model #(.BYTES(1024)) u_mem (
@@ -48,7 +50,7 @@ module tb_cpu386486_reset;
       .bus_fault  (bus_fault)
   );
 
-  cpu386486_top #(.PERSONALITY(P_386DX_25), .ENABLE_FPU(1'b0)) dut (
+  core_486_top #(.PERSONALITY(P_386DX_25), .ENABLE_FPU(1'b0)) dut (
       .clk        (clk),
       .reset      (reset),
       .bus_addr   (bus_addr),
@@ -63,14 +65,16 @@ module tb_cpu386486_reset;
       .intr_ack   (),
       .intr_vec   (8'h00),
       .nmi_req    (1'b0),
-      .dbg_eip    (dbg_eip),
-      .dbg_eflags (dbg_eflags),
-      .dbg_gpr    (dbg_gpr),
-      .dbg_seg    (dbg_seg),
-      .dbg_cr0    (dbg_cr0),
-      .dbg_cr2    (dbg_cr2),
-      .dbg_cr3    (dbg_cr3),
-      .dbg_cr4    (dbg_cr4)
+      .dbg_eip          (dbg_eip),
+      .dbg_eflags       (dbg_eflags),
+      .dbg_gpr          (dbg_gpr),
+      .dbg_seg          (dbg_seg),
+      .dbg_cr0          (dbg_cr0),
+      .dbg_cr2          (dbg_cr2),
+      .dbg_cr3          (dbg_cr3),
+      .dbg_cr4          (dbg_cr4),
+      .dbg_retired_count(dbg_retired_count),
+      .dbg_halted       (dbg_halted)
   );
 
   // Clock.
@@ -120,10 +124,10 @@ module tb_cpu386486_reset;
     check("CR2/CR3/CR4 == 0",          (dbg_cr2 | dbg_cr3 | dbg_cr4) == 32'h0);
 
     if (fail_count == 0) begin
-      $display("PASS tb_cpu386486_reset");
+      $display("PASS tb_core_486_reset");
       $finish(0);
     end else begin
-      $display("FAIL tb_cpu386486_reset (%0d failures)", fail_count);
+      $display("FAIL tb_core_486_reset (%0d failures)", fail_count);
       $fatal(1);
     end
   end
@@ -131,8 +135,8 @@ module tb_cpu386486_reset;
   // Safety net: wall-clock timeout.
   initial begin
     #10_000;
-    $display("FAIL tb_cpu386486_reset (timeout)");
+    $display("FAIL tb_core_486_reset (timeout)");
     $fatal(1);
   end
 
-endmodule : tb_cpu386486_reset
+endmodule : tb_core_486_reset

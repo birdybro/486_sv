@@ -14,13 +14,13 @@ real-mode integer core.
 | 486DX4-100    | 486DX4 | optional   | High-end 486 DOS-gaming target       |
 
 The FPU is **optional** — built only when both `parameter bit ENABLE_FPU`
-and the synthesis define `CPU386486_ENABLE_FPU` are set. See
+and the synthesis define `CORE_486_ENABLE_FPU` are set. See
 [`docs/386_486_cpu_core_spec.md`](docs/386_486_cpu_core_spec.md) §5.
 
 ## Layout
 
 ```
-rtl/cpu386486/   SystemVerilog RTL (synthesizable)
+rtl/core_486/   SystemVerilog RTL (synthesizable)
 tb/              Testbenches (non-synthesizable allowed)
 test/            Directed test descriptions (tests.json)
 docs/            Specification and notes
@@ -36,7 +36,7 @@ Install [Icarus Verilog](https://bleyer.org/icarus/) (and optionally
 python scripts/run_tests.py            # run every known test
 python scripts/run_tests.py reset      # run tests matching "reset"
 python scripts/run_tests.py --lint     # verilator --lint-only
-python scripts/run_tests.py --fpu      # build with CPU386486_ENABLE_FPU
+python scripts/run_tests.py --fpu      # build with CORE_486_ENABLE_FPU
 ```
 
 The runner exits with code 2 if no simulator is on PATH, so CI can

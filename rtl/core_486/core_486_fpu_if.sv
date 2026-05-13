@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
-// cpu386486_fpu_if : optional FPU interface boundary.
+// core_486_fpu_if : optional FPU interface boundary.
 //
 // Build modes (see docs/386_486_cpu_core_spec.md §5):
-//   * FPU not compiled       : `CPU386486_ENABLE_FPU` undefined → this module
-//                              is not instantiated in cpu386486_top.
+//   * FPU not compiled       : `CORE_486_ENABLE_FPU` undefined → this module
+//                              is not instantiated in core_486_top.
 //   * FPU compiled, disabled : ENABLE_FPU = 0 → fpu_stub responds "absent".
 //   * FPU compiled, enabled  : ENABLE_FPU = 1 → real x87 module (future).
 //
 // The handshake is intentionally minimal: the decoder presents an FPU op and
 // the interface tells the core whether to execute, trap (#NM), or wait.
 
-module cpu386486_fpu_if #(
+module core_486_fpu_if #(
     parameter bit ENABLE_FPU = 1'b0
 ) (
     input  logic        clk,
@@ -33,4 +33,4 @@ module cpu386486_fpu_if #(
   assign fpu_raise_nm = fpu_op_valid & ~ENABLE_FPU;
   assign fpu_complete = 1'b0;
 
-endmodule : cpu386486_fpu_if
+endmodule : core_486_fpu_if
