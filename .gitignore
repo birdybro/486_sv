@@ -1,0 +1,9 @@
+build/
+*.vvp
+*.out
+*.vcd
+*.fst
+*.log
+__pycache__/
+*.pyc
+obj_dir/

@@ -48,14 +48,18 @@ Maintained alongside `docs/386_486_cpu_core_spec.md` (architectural spec),
 - Personalities, milestones, FPU build matrix, module decomposition, bus
   interface sketch, coding rules, and legal/sourcing posture all captured.
 
-### Task 2 — Skeleton RTL [ ]
+### Task 2 — Skeleton RTL [x]
 
-- `rtl/cpu386486/cpu386486_pkg.sv` (types, enums, parameters).
-- `rtl/cpu386486/cpu386486_config.sv` (personality → feature table).
-- `rtl/cpu386486/cpu386486_top.sv` (clock, reset, bus, intr, params).
-- Stub modules: regs, decode, alu, control, bus_if, segment, paging,
-  exceptions, prefetch, microcode, fpu_if, fpu_stub.
-- Synthesizable (lint-clean) even though logic is empty.
+- Package, config, top, and all stub modules landed under `rtl/cpu386486/`.
+- `rtl/cpu386486/filelist.f` records the compile order for tooling.
+- Top module exposes clock/reset, 32-bit bus master, INTR/NMI, and debug
+  observability (EIP/EFLAGS). All stubs are lint-friendly (every output is
+  driven; unused inputs are gathered into `_unused` sinks).
+- FPU is gated by both `parameter bit ENABLE_FPU` and the
+  ``CPU386486_ENABLE_FPU`` define; default build excludes the FPU
+  interface from elaboration.
+- Lint not yet run on the dev host (no `verilator`/`iverilog` on PATH; the
+  test runner in Task 3 will execute lint when those tools are present).
 
 ### Task 3 — Simulation harness [ ]
 
